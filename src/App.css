@@ -13,15 +13,16 @@ code {
     monospace;
 }
 .add-new {
-  // display: flex;
+ 
   justify-content: space-between;
   align-items: center;
-  .group-btns {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-  }
+
+} 
+.add-new .group-btns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
 }
 .sort-table {
   display: flex;
@@ -52,9 +53,10 @@ code {
   border: 1px solid #000;
   border-radius: 5px;
   outline: none;
-  &:focus {
-    border: 1px solid #ccc;
-  }
+
+} 
+.login-container .input:focus {
+  border: 1px solid #000;
 }
 .eye-watch {
   position: absolute;

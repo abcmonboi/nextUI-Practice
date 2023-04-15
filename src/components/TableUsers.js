@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Table from "react-bootstrap/Table";
 import { fetchAllUsers } from "../services/UserService";
 import ReactPaginate from "react-paginate";
 import ModalAddNew from "./ModalAddNew";
@@ -8,20 +7,60 @@ import _ from "lodash";
 import { CSVLink } from "react-csv";
 import Papa from "papaparse";
 import { toast } from "react-toastify";
+import {
+  Container,
+  Text,
+  Button,
+  Grid,
+  Col,
+  Input,
+  Row,
+  Loading,
+  Spacer,
+  Table,
+  Card,
+} from "@nextui-org/react";
+import background from "../assets/images/bg-landscape.avif";
 
 const TableUsers = (props) => {
   const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
   const [mode, setMode] = useState();
   const [users, setUsers] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [userInfo, setUserInfo] = useState({});
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
   const [sortBy, setSortBy] = useState("asc");
   const [sortByName, setSortByName] = useState("asc");
   const [keyword, setKeyword] = useState("");
   const [dataExport, setDataExport] = useState([]);
+  const [isShowLoading, setIsShowLoading] = useState(false);
+  const columns = [
+    {
+      key: "id",
+      label: "ID",
+    },
+    {
+      key: "email",
+      label: "Email",
+    },
+    {
+      key: "first_name",
+      label: "First name",
+    },
+    {
+      key: "last_name",
+      label: "Last name",
+    },
+    {
+      key: "action",
+      label: "Action",
+    },
+  ];
+  const [rows, setRows] = useState([]);
   useEffect(() => {
     //call api
+    setIsShowLoading(true);
     getUsers(1);
   }, []);
 
@@ -31,9 +70,12 @@ const TableUsers = (props) => {
       setTotalPages(res.total_pages);
       setUsers(res.data);
     }
+    setIsShowLoading(false);
   };
   const handlePageClick = (e) => {
-    getUsers(e.selected + 1);
+    setIsShowLoading(true);
+    setCurrentPage(e);
+    getUsers(e);
   };
   const handleUpdateUsers = (user) => {
     if (mode === "edit") {
@@ -111,7 +153,6 @@ const TableUsers = (props) => {
                   }
                 });
                 setUsers(result);
-             
               }
             } else {
               toast.error("File is not valid");
@@ -125,10 +166,93 @@ const TableUsers = (props) => {
       toast.error("File is not CSV");
     }
   };
+  useEffect(() => {
+    let rowArray = [];
+    users.map((item, index) => {
+      rowArray.push({
+        key: index + 1,
+        id: item.id,
+        email: item.email,
+        first_name: item.first_name,
+        last_name: item.last_name,
+      });
+    });
+    setRows(rowArray);
+  }, [users]);
 
   return (
     <>
-      <div className="my-3 add-new d-sm-flex">
+      <  >
+        <Grid.Container
+          justify="center"
+          css={{ height: "100vh", backgroundImage: `url(${background})`,backgroundSize: "contain",
+          backgroundPosition: "center",
+          width: "100%", }}
+        >
+          <Grid xs={12} sm={8} alignitems="center">
+            <Col
+              css={{
+                marginTop: "40px",
+              }}
+              justify="center"
+              span={12}
+              alignitems="center"
+            >
+              <Card>
+                <Card.Header>
+                  <Text b>List User</Text>
+                </Card.Header>
+                <Card.Divider />
+                <Card.Body css={{ py: "$10" }}>
+                  {users && !isShowLoading ? (
+                    <Table
+                      shadow={false}
+                      color="secondary"
+                      aria-label="Example pagination  table"
+                      css={{
+                        height: "auto",
+                        minWidth: "100%",
+                      }}
+                    >
+                      <Table.Header columns={columns}>
+                        {(column) => (
+                          <Table.Column key={column?.key}>
+                            {column?.label}
+                          </Table.Column>
+                        )}
+                      </Table.Header>
+
+                      <Table.Body items={rows}>
+                        {(item) => (
+                          <Table.Row key={item.key}>
+                            {(columnKey) => (
+                              <Table.Cell>{item[columnKey]}</Table.Cell>
+                            )}
+                          </Table.Row>
+                        )}
+                      </Table.Body>
+
+                      <Table.Pagination
+                        total={totalPages}
+                        color="warning"
+                        shadow
+                        noMargin
+                        rowsPerPage={6}
+                        onPageChange={handlePageClick}
+                        page = {currentPage}
+                      />
+                    </Table>
+                  ) : (
+                      <Loading color={"warning"} />
+                  )}
+                </Card.Body>
+              </Card>
+            </Col>
+          </Grid>
+        </Grid.Container>
+      </>
+
+      {/* <div className="my-3 add-new d-sm-flex">
         <span className="">
           <h5>List Users</h5>
         </span>
@@ -360,7 +484,7 @@ const TableUsers = (props) => {
         handleUpdateUsers={handleUpdateUsers}
         mode={mode}
         userInfo={userInfo}
-      />
+      /> */}
     </>
   );
 };

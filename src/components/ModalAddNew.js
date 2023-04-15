@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+// import { Modal, Button } from "react-bootstrap";
 import { postCreateUser, putUpdateUser } from "../services/UserService";
 import { toast } from "react-toastify";
+import { Modal,Button } from "@nextui-org/react";
 
 const ModalAddNew = (props) => {
   const { handleClose, show, handleUpdateUsers, mode, userInfo } = props;

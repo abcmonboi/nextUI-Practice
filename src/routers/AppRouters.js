@@ -12,7 +12,7 @@ const AppRouters = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
         </Route>
-        <Route path="/users" element={<PrivateRoute />}></Route>
+        <Route path="/user" element={<PrivateRoute />}></Route>
         <Route path="*" element={<NotFound/>}></Route>
       </Routes>
       

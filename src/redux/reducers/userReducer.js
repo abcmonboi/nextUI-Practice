@@ -13,6 +13,7 @@ const INITIAL_STATE = {
   },
   isLogging: false,
   auth: null,
+  isError : null
 };
 const userReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -42,6 +43,7 @@ const userReducer = (state = INITIAL_STATE, action) => {
         },
         isLogging: false,
         auth: false,
+        isError : true
       };
     case REFRESH:
       return {
