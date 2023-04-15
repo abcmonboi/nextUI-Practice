@@ -5,17 +5,19 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import logoab from "../assets/images/channels4_profile.jpg";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
-
+import { useDispatch,useSelector } from "react-redux";
+import { handleUserLogout } from "../redux/actions/userActions";
 const Header = (props) => {
   const navigate = useNavigate();
-  const { logout, user } = useContext(UserContext);
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.user.account);
+  const auth = useSelector(state => state.user.auth);
   const handleLogout = () => {
-    if (user && user.auth === true) {
-      logout();
+    if (user && auth === true 
+      ) {
+      dispatch(handleUserLogout());
       toast.success("Logout successfully");
-      navigate("/login");
+    navigate("/login");
     }
   };
 
@@ -39,15 +41,15 @@ const Header = (props) => {
               ></img>
             </NavLink>
           </Navbar.Brand>
-          <Navbar.Toggle hidden={!user?.auth}  aria-controls="basic-navbar-nav" />
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse  id="basic-navbar-nav">
-            {(user.auth || window.location.pathname === "/") && (
+            {( user || window.location.pathname === "/") && (
               <>
                 <Nav className="me-auto">
                   <NavLink to="/" className="nav-link" activeclassname="active">
                     Home
                   </NavLink>
-                  {user && user.email && (
+                
                     <NavLink
                       to="/users"
                       className="nav-link"
@@ -55,17 +57,17 @@ const Header = (props) => {
                     >
                       Manage User
                     </NavLink>
-                  )}
+               
                 </Nav>
                 <Nav>
-                  {user && user.email && (
+                  {user?.token && (
                     <span className="nav-link text-white">
                       {"Hello "}
                       {user && user.email.toUpperCase().split("@")[0]}
                     </span>
                   )}
                   <NavDropdown title="Settings" id="basic-nav-dropdown">
-                    {user && user.auth === true ? (
+                    {user?.token ? (
                       <>
                         <NavDropdown.Item onClick={() => handleLogout()}>
                           Logout

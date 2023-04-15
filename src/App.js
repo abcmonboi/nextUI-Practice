@@ -2,28 +2,20 @@ import "./App.scss";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
-import { UserContext } from "./context/UserContext";
-import { useContext } from "react";
 import { useEffect } from "react";
 import AppRouters from "./routers/AppRouters";
 import { Container } from "@nextui-org/react";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { handleRefresh } from "./redux/actions/userActions";
 function App() {
-  const { loginContext } = useContext(UserContext);
-
-  //eslint-disable-next-line
   const dispatch = useDispatch();
-  //eslint-disable-next-line
-  const { dataUserRedux } = useSelector((state) => state.user?.account);
+  const auth = useSelector((state) => state.user.auth);
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      loginContext(
-        localStorage.getItem("email"),
-        localStorage.getItem("token")
-      );
+      dispatch(handleRefresh());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    //eslint-disable-next-line
+  }, [auth]);
   return (
     <>
       <div className="app-container">

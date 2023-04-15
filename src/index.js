@@ -1,27 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import { UserProvider } from "./context/UserContext";
-import { NextUIProvider,createTheme } from '@nextui-org/react';
-import store from './redux/store';
-import { Provider } from 'react-redux';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import { NextUIProvider, createTheme } from "@nextui-org/react";
+import store from "./redux/store";
+import { Provider } from "react-redux";
 const darkTheme = createTheme({
-  type: 'dark',
+  type: "dark",
 });
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
-  <UserProvider>
-  <BrowserRouter>
-    <NextUIProvider theme={darkTheme}>
-    <App />
-    </NextUIProvider>
-  </BrowserRouter>,
-  </UserProvider>
+    <BrowserRouter>
+      <NextUIProvider theme={darkTheme}>
+        <App />
+      </NextUIProvider>
+    </BrowserRouter>
+    ,
   </Provider>
 );
 

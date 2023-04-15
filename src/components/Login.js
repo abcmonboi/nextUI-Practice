@@ -1,50 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginApi } from "../services/UserService";
 import { toast } from "react-toastify";
-import { UserContext } from "../context/UserContext";
-import { useContext } from "react";
+import {handleLoginRedux} from "../redux/actions/userActions";
+import { useDispatch,useSelector } from "react-redux";
 const Login = () => {
-  const { loginContext } = useContext(UserContext);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isShow, setIsShow] = useState(false);
-  const [isLogging, setIsLogging] = useState(false);
+  const {isLogging,auth,account} = useSelector(state => state.user);
   const handleLogin = async () => {
-    setIsLogging(true);
     if (email.length === 0 || password.length === 0) {
       toast.error("Email or password is empty");
-      setIsLogging(false);
       return;
-    }
-
-    let res = await loginApi(email.trim(), password.trim());
-    //   {
-    //     eve.holt@reqres.in
-    //     cityslicka
-    // }
-
-    if (res && res.token) {
-      toast.success(`Welcome ${email}`);
-      setIsLogging(false);
-      loginContext(email.trim(), res.token);
-      navigate("/");
     } else {
-      if (res && res.status === 400) {
-        toast.error(res.data.error);
-      } else {
-        toast.error("Login failed");
-      }
-      setIsLogging(false);
+    dispatch( handleLoginRedux(email.trim(),password.trim()));
+    
     }
+   
   };
   useEffect(() => {
-    let token = localStorage.getItem("token");
-    if (token) {
+    if (auth && localStorage.getItem("token")) {
+      toast.success("Welcome back " + account.email);
       navigate("/");
+    } else if (auth === false && isLogging === false) {
+      toast.error("Wrong email or password");
     }
-  });
+    //eslint-disable-next-line
+  },[auth,isLogging]);
 
   return (
     <>
@@ -60,7 +44,6 @@ const Login = () => {
             if (e.key === "Enter") {
               handleLogin();
             }
-
           }}
           placeholder="eve.holt@reqres.in"
           type="text"
@@ -72,7 +55,6 @@ const Login = () => {
               if (e.key === "Enter") {
                 handleLogin();
               }
-
             }}
             value={password}
             onChange={(e) => {
@@ -100,15 +82,18 @@ const Login = () => {
           onClick={() => {
             handleLogin();
           }}
-
         >
-          {isLogging ? <i className="fas fa-circle-notch fa-spin"></i> : "Log in"}
+          {isLogging ? (
+            <i className="fas fa-circle-notch fa-spin"></i>
+          ) : (
+            "Log in"
+          )}
         </button>
         <div role="button" className="mt-5 text-center  text-white ">
           <Link to="/" className="nav-link">
-            <i class="fa-solid fa-house"></i>
+            <i className="fa-solid fa-house"></i>
             <span className="fw-semibold fs-6 ">
-              <u > Home</u>
+              <u> Home</u>
             </span>
           </Link>
         </div>

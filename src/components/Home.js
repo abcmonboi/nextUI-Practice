@@ -1,11 +1,10 @@
 import React, { Fragment } from "react";
 import { Text, Col, Grid, Button } from "@nextui-org/react";
 import background from "../assets/images/bg-landscape.avif";
-import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
+import { useSelector } from "react-redux";
 import InfoCard from "./InfoCard";
 const Home = () => {
-  const { user } = useContext(UserContext);
+  const user  = useSelector(state => state.user.account);
   return (
     <Fragment>
       <Grid.Container

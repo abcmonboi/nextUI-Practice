@@ -1,22 +1,22 @@
 import React from "react";
 import TableUsers from "../components/TableUsers";
-import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
 import Container from "react-bootstrap/Container";
-
+import { useSelector } from "react-redux";
 const PrivateRoute = () => {
-  const { user } = useContext(UserContext);
+  const {account} = useSelector((state) => state.user);
+  const {auth} = useSelector((state) => state.user);
 
-  if(user && !user.auth){
-    return <>
-      <h1>Not authorized</h1>
-    </>
-  }
   return (
     <>
-      <Container>
-      <TableUsers />
-      </Container>
+      {account && auth ? (
+        <Container>
+          <TableUsers />
+        </Container>
+      ) : (
+        <>
+          <h1>Not authorized</h1>
+        </>
+      )}
     </>
   );
 };
