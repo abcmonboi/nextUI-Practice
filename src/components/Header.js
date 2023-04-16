@@ -121,9 +121,9 @@ useEffect(() => {
             variant={"underline-rounded"}
             activeColor={"warning"}
           >
-            <Navbar.Link onClick={() => navigate("/")} isActive={location ==="/"}>Home</Navbar.Link>
+            <Navbar.Link onClick={() => navigate("/")} isActive={location ==="/"}>Trang Chính</Navbar.Link>
             <Navbar.Link onClick={() => navigate("/user")} isActive={location ==="/user"}>
-              Manage User
+              Quản lý người dùng
             </Navbar.Link>
           </Navbar.Content>
           <Navbar.Content></Navbar.Content>
@@ -160,7 +160,7 @@ useEffect(() => {
                     textValue="Profile"
                   >
                     <Text b color="inherit" css={{ d: "flex" }}>
-                      Signed in as
+                     Tài khoản
                     </Text>
                     <Text b color="inherit" css={{ d: "flex" }}>
                       {user && user.email.split("@")[0]}
@@ -173,7 +173,9 @@ useEffect(() => {
                     withDivider
                     color="warning"
                   >
-                    <div onClick={() => handleLogout()}>Log Out</div>
+                    <div onClick={() => handleLogout()}>
+                      Đăng xuất
+                    </div>
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
@@ -187,7 +189,7 @@ useEffect(() => {
                     onPress={() => navigate("/login")}
                   >
 
-                    Login
+                    Đăng nhập
 
                   </Button>
                 </Navbar.Item>

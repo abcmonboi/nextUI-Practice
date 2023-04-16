@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { fetchAllUsers } from "../services/UserService";
-import ReactPaginate from "react-paginate";
 import ModalAddNew from "./ModalAddNew";
 import ModalConfirm from "./ModalConfirm";
 import _ from "lodash";
@@ -19,7 +18,16 @@ import {
   Spacer,
   Table,
   Card,
+  Tooltip,
+  User,
+  Badge,
 } from "@nextui-org/react";
+import { IconButton } from "./IconButton";
+import { EditIcon } from "./EditIcon";
+import { DeleteIcon } from "./DeleteIcon";
+import { BsFiletypeCsv } from "react-icons/bs";
+import { AiFillFileAdd } from "react-icons/ai";
+
 import background from "../assets/images/bg-landscape.avif";
 
 const TableUsers = (props) => {
@@ -30,8 +38,8 @@ const TableUsers = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [userInfo, setUserInfo] = useState({});
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
-  const [sortBy, setSortBy] = useState("asc");
-  const [sortByName, setSortByName] = useState("asc");
+  // const [sortBy, setSortBy] = useState("asc");
+  // const [sortByName, setSortByName] = useState("asc");
   const [keyword, setKeyword] = useState("");
   const [dataExport, setDataExport] = useState([]);
   const [isShowLoading, setIsShowLoading] = useState(false);
@@ -53,7 +61,7 @@ const TableUsers = (props) => {
       label: "Last name",
     },
     {
-      key: "action",
+      key: "actions",
       label: "Action",
     },
   ];
@@ -166,6 +174,46 @@ const TableUsers = (props) => {
       toast.error("File is not CSV");
     }
   };
+  const renderCell = (user, columnKey) => {
+    const cellValue = user[columnKey];
+    switch (columnKey) {
+      case "actions":
+        return (
+          <Row justify="center" align="center">
+            <Col css={{ d: "flex" }}>
+              <Tooltip content="Edit user">
+                <IconButton
+                  onClick={() => {
+                    setMode("edit");
+                    setIsShowModalAddNew(true);
+                    setUserInfo(user);
+                  }}
+                >
+                  <EditIcon size={20} fill="#979797" />
+                </IconButton>
+              </Tooltip>
+            </Col>
+            <Col css={{ d: "flex" }}>
+              <Tooltip
+                content="Delete user"
+                color="error"
+                onClick={() => {
+                  setIsShowModalDelete(true);
+                  setUserInfo(user);
+                  setMode("delete");
+                }}
+              >
+                <IconButton>
+                  <DeleteIcon size={20} fill="#FF0080" />
+                </IconButton>
+              </Tooltip>
+            </Col>
+          </Row>
+        );
+      default:
+        return cellValue;
+    }
+  };
   useEffect(() => {
     let rowArray = [];
     users.map((item, index) => {
@@ -182,17 +230,21 @@ const TableUsers = (props) => {
 
   return (
     <>
-      <  >
+      <>
         <Grid.Container
           justify="center"
-          css={{ height: "100vh", backgroundImage: `url(${background})`,backgroundSize: "contain",
-          backgroundPosition: "center",
-          width: "100%", }}
+          css={{
+            height: "100vh",
+            backgroundImage: `url(${background})`,
+            backgroundSize: "contain",
+            backgroundPosition: "center",
+            width: "100%",
+          }}
         >
           <Grid xs={12} sm={8} alignitems="center">
             <Col
               css={{
-                marginTop: "40px",
+                marginTop: "100px",
               }}
               justify="center"
               span={12}
@@ -200,7 +252,80 @@ const TableUsers = (props) => {
             >
               <Card>
                 <Card.Header>
-                  <Text b>List User</Text>
+                  <Col
+                    css={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Text b h4>
+                      Danh sách người dùng
+                    </Text>
+                    <div>
+                      <div
+                        style={{
+                          display: "inline-block",
+                          marginRight: "10px",
+                        }}
+                      >
+                        <Button auto color="primary">
+                          <label htmlFor="import-csv">
+                            <BsFiletypeCsv color="#ffffff" />
+                            {" Nhập CSV"}
+                          </label>
+                          <input
+                            onChange={(e) => {
+                              handleImportCSV(e);
+                            }}
+                            id="import-csv"
+                            type="file"
+                            hidden
+                          />
+                        </Button>
+                      </div>
+                      <div
+                        style={{
+                          display: "inline-block",
+                          marginRight: "10px",
+                        }}
+                      >
+                        <Button auto color="success">
+                          <CSVLink
+                            data={dataExport}
+                            filename={"my-file.csv"}
+                            style={{
+                              textDecoration: "none",
+                              color: "#fff",
+                            }}
+                            target="_blank"
+                            asyncOnClick={true}
+                            onClick={getUsersExport}
+                          >
+                            <BsFiletypeCsv color="#ffffff" />
+
+                            {" Xuất CSV"}
+                          </CSVLink>
+                        </Button>
+                      </div>
+                      <div
+                        style={{
+                          display: "inline-block",
+                        }}
+                      >
+                        <Button auto color="warning">
+                          <div
+                            onClick={() => {
+                              setMode("create");
+                              setIsShowModalAddNew(true);
+                            }}
+                          >
+                            <AiFillFileAdd color="#ffffff" />
+                            {" Thêm mới"}
+                          </div>
+                        </Button>
+                      </div>
+                    </div>
+                  </Col>
                 </Card.Header>
                 <Card.Divider />
                 <Card.Body css={{ py: "$10" }}>
@@ -213,10 +338,11 @@ const TableUsers = (props) => {
                         height: "auto",
                         minWidth: "100%",
                       }}
+           
                     >
                       <Table.Header columns={columns}>
                         {(column) => (
-                          <Table.Column key={column?.key}>
+                          <Table.Column   key={column?.key}>
                             {column?.label}
                           </Table.Column>
                         )}
@@ -226,265 +352,56 @@ const TableUsers = (props) => {
                         {(item) => (
                           <Table.Row key={item.key}>
                             {(columnKey) => (
-                              <Table.Cell>{item[columnKey]}</Table.Cell>
+                              <Table.Cell>
+                                {renderCell(item, columnKey)}
+                              </Table.Cell>
                             )}
                           </Table.Row>
                         )}
                       </Table.Body>
 
                       <Table.Pagination
+                        initialPage={1}
                         total={totalPages}
                         color="warning"
                         shadow
                         noMargin
                         rowsPerPage={6}
                         onPageChange={handlePageClick}
-                        page = {currentPage}
+                        page={currentPage}
                       />
                     </Table>
                   ) : (
-                      <Loading color={"warning"} />
+                    <Loading color={"warning"} />
                   )}
                 </Card.Body>
               </Card>
             </Col>
           </Grid>
         </Grid.Container>
-      </>
-
-      {/* <div className="my-3 add-new d-sm-flex">
-        <span className="">
-          <h5>List Users</h5>
-        </span>
-        <div className="group-btns mt-sm-0 mt-3">
-          <label className="btn btn-secondary" htmlFor="import-csv">
-            <i className="fa-solid fa-file-csv "></i>
-            {" Import CSV"}
-          </label>
-          <input
-            onChange={(e) => {
-              handleImportCSV(e);
-            }}
-            id="import-csv"
-            type="file"
-            hidden
-          />
-
-          <CSVLink
-            data={dataExport}
-            filename={"my-file.csv"}
-            className="btn btn-info"
-            target="_blank"
-            asyncOnClick={true}
-            onClick={getUsersExport}
-          >
-            <i className="fa-solid fa-file-csv "></i>
-            {" Export CSV"}
-          </CSVLink>
-          <button
-            onClick={() => {
-              setMode("create");
-              setIsShowModalAddNew(true);
-            }}
-            className="btn btn-dark "
-          >
-            <i className="fa-solid fa-circle-plus text-danger"></i>
-            {" Add User"}
-          </button>
-        </div>
-      </div>
-      <div className="col-12 col-xs-2 my-3 col-lg-3">
-        <input
-          onChange={(e) => {
-            handleSearch(e);
+        <ModalConfirm
+          show={isShowModalDelete}
+          handleClose={() => {
+            setIsShowModalDelete(false);
+            setMode("");
+            setUserInfo({});
           }}
-          value={keyword}
-          type="text"
-          className="form-control border border-secondary"
-          placeholder="Search user by email..."
+          handleUpdateUsers={handleUpdateUsers}
+          mode={mode}
+          userInfo={userInfo}
         />
-      </div>
-      <div className="customize-tablemobile">
-      <Table striped bordered hover >
-        <thead>
-          <tr>
-            <th
-              style={{
-                width: "80px",
-              }}
-            >
-              <div className="sort-table">
-                <span> ID </span>
-                <span>
-                  {sortBy === "asc" ? (
-                    <i
-                      onClick={() => {
-                        setSortBy("desc");
-                        setUsers([...users].sort((a, b) => b.id - a.id));
-                      }}
-                      className="fa-solid fa-arrow-down-wide-short"
-                    ></i>
-                  ) : (
-                    <i
-                      onClick={() => {
-                        setSortBy("asc");
-                        setUsers([...users].sort((a, b) => a.id - b.id));
-                      }}
-                      className="fa-solid fa-arrow-up-wide-short"
-                    ></i>
-                  )}
-                </span>
-              </div>
-            </th>
-            <th>Email</th>
-            <th>
-              <div className="sort-table">
-                <span> First name </span>
-                <span>
-                  {sortByName === "asc" ? (
-                    <i
-                      onClick={() => {
-                        setSortByName("desc");
-
-                        let cloneListUsers = _.orderBy(
-                          users,
-                          ["first_name"],
-                          ["desc"]
-                        );
-                        setUsers(cloneListUsers);
-                      }}
-                      className="fa-solid fa-arrow-down-wide-short"
-                    ></i>
-                  ) : (
-                    <i
-                      onClick={() => {
-                        setSortByName("asc");
-
-                        let cloneListUsers = _.orderBy(
-                          users,
-                          ["first_name"],
-                          ["asc"]
-                        );
-                        setUsers(cloneListUsers);
-                      }}
-                      className="fa-solid fa-arrow-up-wide-short"
-                    ></i>
-                  )}
-                </span>
-              </div>
-            </th>
-            <th>Last Name</th>
-            <th
-              style={{
-                width: "200px",
-              }}
-            >
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {users &&
-            users.length > 0 &&
-            users.map((user, index) => {
-              return (
-                <tr key={`user-${index}`}>
-                  <td>{user.id}</td>
-                  <td>{user.email}</td>
-                  <td>{user.first_name}</td>
-                  <td>{user.last_name}</td>
-                  <td>
-                    <div className="d-flex justify-content-center align-items-center">
-                      <button
-                        onClick={() => {
-                          setMode("edit");
-                          setIsShowModalAddNew(true);
-                          setUserInfo(user);
-                        }}
-                        className="btn btn-dark d-flex justify-content-center align-items-center "
-                      >
-                        <i className="fa-solid fa-pencil"></i>
-                        <span
-                          style={{
-                            marginLeft: "5px",
-                          }}
-                        >
-                          Edit
-                        </span>
-                      </button>
-
-                      <button
-                        style={{
-                          marginLeft: "20px",
-                        }}
-                        className="btn btn-danger d-flex justify-content-center align-items-center"
-                        onClick={() => {
-                          setIsShowModalDelete(true);
-                          setUserInfo(user);
-                          setMode("delete");
-                        }}
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                        <span
-                          style={{
-                            marginLeft: "5px",
-                          }}
-                        >
-                          Delete
-                        </span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </Table>
-      </div>
-      <ReactPaginate
-        breakLabel="..."
-        nextLabel="next >"
-        onPageChange={handlePageClick}
-        pageRangeDisplayed={3}
-        pageCount={totalPages}
-        previousLabel="< previous"
-        renderOnZeroPageCount={null}
-        containerClassName="pagination "
-        pageClassName="text-dark"
-        pageLinkClassName="page-link text-dark "
-        previousClassName=""
-        previousLinkClassName="page-link text-danger "
-        nextClassName=" "
-        nextLinkClassName="page-link text-danger"
-        breakClassName="page-item "
-        breakLinkClassName="page-link "
-        activeClassName="bg-dark "
-        activeLinkClassName="bg-dark text-white "
-        disabledClassName="text-black"
-        disabledLinkClassName ="text-black"
-      />
-      <ModalAddNew
-        show={isShowModalAddNew}
-        handleClose={() => {
-          setIsShowModalAddNew(false);
-          setMode("");
-          setUserInfo({});
-        }}
-        handleUpdateUsers={handleUpdateUsers}
-        mode={mode}
-        userInfo={userInfo}
-      />
-      <ModalConfirm
-        show={isShowModalDelete}
-        handleClose={() => {
-          setIsShowModalDelete(false);
-          setMode("");
-          setUserInfo({});
-        }}
-        handleUpdateUsers={handleUpdateUsers}
-        mode={mode}
-        userInfo={userInfo}
-      /> */}
+        <ModalAddNew
+          show={isShowModalAddNew}
+          handleClose={() => {
+            setIsShowModalAddNew(false);
+            setMode("");
+            setUserInfo({});
+          }}
+          handleUpdateUsers={handleUpdateUsers}
+          mode={mode}
+          userInfo={userInfo}
+        />
+      </>
     </>
   );
 };

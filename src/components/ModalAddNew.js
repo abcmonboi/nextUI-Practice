@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-// import { Modal, Button } from "react-bootstrap";
 import { postCreateUser, putUpdateUser } from "../services/UserService";
 import { toast } from "react-toastify";
-import { Modal,Button } from "@nextui-org/react";
+import { Modal, Button, Text, Input } from "@nextui-org/react";
 
 const ModalAddNew = (props) => {
   const { handleClose, show, handleUpdateUsers, mode, userInfo } = props;
@@ -64,56 +63,55 @@ const ModalAddNew = (props) => {
   return (
     <>
       <Modal
-        backdrop="static"
-        keyboard={false}
-        show={show}
-        onHide={handleClose}
+        closeButton
+        aria-labelledby="modal-title"
+        open={show}
+        onClose={handleClose}
+        aria-label="Modal Example"
       >
-        <Modal.Header closeButton>
-          <Modal.Title>{mode ? "Edit User" : "Create User"}</Modal.Title>
+        <Modal.Header aria-label="Modal Header">
+          <Text id="modal-title" size={18}>
+            <Text b size={18}>
+              Thêm người dùng mới
+            </Text>
+          </Text>
         </Modal.Header>
-        <Modal.Body>
-          <form>
-            <div className="mb-3">
-              <label htmlFor="exampleInputEmail1" className="form-label">
-                Name
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="exampleInputEmail1"
-                aria-describedby="emailHelp"
-                value={name || ""}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="exampleInputPassword1" className="form-label">
-                Job
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="exampleInputPassword1"
-                value={job || ""}
-                onChange={(e) => setJob(e.target.value)}
-              />
-            </div>
-          </form>
+        <Modal.Body aria-label="Modal Body">
+          <Input
+            clearable
+            bordered
+            fullWidth
+            size="lg"
+            placeholder="Tên"
+            label="Tên"
+            value={name || ""}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            clearable
+            bordered
+            fullWidth
+            size="lg"
+            placeholder="Công việc"
+            label="Công việc"
+            value={job || ""}
+            onChange={(e) => setJob(e.target.value)}
+          />
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
+          <Button aria-label="Close" auto flat color="" onPress={handleClose}>
+            Ẩn
           </Button>
           <Button
             disabled={isLoading}
-            variant="danger"
             onClick={handleSaveUser}
-       
+            color={"warning"}
+            aria-label="Confirm"
+            auto
+            onPress={handleClose}
           >
-            {mode==="edit" && "Update"}
-            {mode==="create" && "Create"}
-            
+            {mode === "edit" && "Cập nhật"}
+            {mode === "create" && "Tạo mới"}
           </Button>
         </Modal.Footer>
       </Modal>

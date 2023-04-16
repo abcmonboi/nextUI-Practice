@@ -21,6 +21,8 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isLogging: true,
+        isError : null
+
       };
     case FETCH_USER_LOGIN_SUCCESS:
       localStorage.setItem("token", action.data.token);
@@ -33,6 +35,8 @@ const userReducer = (state = INITIAL_STATE, action) => {
         },
         isLogging: false,
         auth: true,
+        isError : null
+
       };
     case FETCH_USER_LOGIN_FAILURE:
       return {
@@ -42,8 +46,9 @@ const userReducer = (state = INITIAL_STATE, action) => {
           token: "",
         },
         isLogging: false,
-        auth: false,
-        isError : true
+        isError : true,
+        auth: false
+        
       };
     case REFRESH:
       return {
@@ -54,6 +59,8 @@ const userReducer = (state = INITIAL_STATE, action) => {
         },
         isLogging: false,
         auth: true,
+        isError : null
+
       };
     case USER_LOGOUT:
       return {
@@ -63,7 +70,8 @@ const userReducer = (state = INITIAL_STATE, action) => {
           token: "",
         },
         isLogging: false,
-        auth: false,
+        auth: null,
+        isError : null
       };
     default:
       return state;

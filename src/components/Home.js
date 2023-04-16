@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Spacer, Text, Col, Grid, Button, Table } from "@nextui-org/react";
+import { Spacer, Text, Col, Grid, Button, Table, Row } from "@nextui-org/react";
 import background from "../assets/images/bg-landscape.avif";
 import { useSelector } from "react-redux";
 import InfoCard from "./InfoCard";
@@ -10,46 +10,7 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.account);
-  const columns = [
-    {
-      key: "email",
-      label: "Email",
-    },
-    {
-      key: "first_name",
-      label: "First Name",
-    },
-    {
-      key: "last_name",
-      label: "Last Name",
-    },
-  ];
-  const rows = [
-    {
-      key: "1",
-      email: "Tony Reichert",
-      first_name: "CEO",
-      last_name: "Tên",
-    },
-    {
-      key: "2",
-      email: "Zoey Lang",
-      first_name: "Technical Lead",
-      last_name: "Paused",
-    },
-    {
-      key: "3",
-      email: "Jane Fisher",
-      first_name: "Senior Developer",
-      last_name: "Tên",
-    },
-    {
-      key: "4",
-      email: "William Howard",
-      first_name: "Community Manager",
-      last_name: "Vacation",
-    },
-  ];
+
   return (
     <Fragment>
       <Grid.Container
@@ -67,21 +28,27 @@ const Home = () => {
             <Text weight="bold" size={70} css={{ textAlign: "center" }}>
               {user?.email ? "Chào mừng trở lại" : "Xin chào "}
             </Text>
-            <Text  color="success" weight="bold" size={62} css={{ textAlign: "center" }}>
-              {user?.email ? user?.email.split("@")[0].toUpperCase()
-               : "Nhà tuyển dụng"}
+            <Text
+              color="success"
+              weight="bold"
+              size={62}
+              css={{ textAlign: "center" }}
+            >
+              {user?.email
+                ? user?.email.split("@")[0].toUpperCase()
+                : "Nhà tuyển dụng"}
             </Text>
             {!user && (
-            <Button
-              size="lg"
-              auto
-              shadow
-              color="warning"
-              css={{ width: "100%", marginTop: "10px" }}
-              onClick={() => navigate("/login")}
-            >
-              Dùng thử ngay
-            </Button>
+              <Button
+                size="lg"
+                auto
+                shadow
+                color="warning"
+                css={{ width: "100%", marginTop: "10px" }}
+                onClick={() => navigate("/login")}
+              >
+                Dùng thử ngay
+              </Button>
             )}
           </Col>
         </Grid>
@@ -137,33 +104,51 @@ const Home = () => {
           CSVLink. <br />
           + Thêm file CSV với định dạng phải đúng yêu cầu theo mẫu :
           <Spacer y={1} />
-          <Table
+          <Row justify="center">
+          <table
             aria-label="Example table with static content"
             css={{
               height: "auto",
               minWidth: "100%",
+              border:"1px solid #ecedee",
+              width: "100%",
             }}
           >
-            <Table.Header columns={columns}>
-              {(column) => (
-                <Table.Column key={column.key}>{column.label}</Table.Column>
-              )}
-            </Table.Header>
-            <Table.Body items={rows}>
-              {(item) => (
-                <Table.Row key={item.key}>
-                  {(columnKey) => {
-                    return (
-                      <>
-                     <Table.Cell>{item[columnKey]}</Table.Cell>
-                      </>
-                  )
-                  }
-                    }
-                </Table.Row>
-              )}
-            </Table.Body>
-          </Table>
+            <tr>
+              <th style={{
+                width: "80px",
+                float : "left",
+              }} >Email</th>
+              <th  style={{
+                width: "100px",
+              }}>First Name</th>
+              <th  style={{
+                width: "100px",
+                float : "left",
+              }}>Last Name</th>
+            </tr>
+            <tr>
+              <td> Email 1</td>
+              <td>Họ 1</td>
+              <td>Tên 1</td>
+            </tr>
+            <tr>
+              <td> Email 2</td>
+              <td>Họ 2</td>
+              <td>Tên 2</td>
+            </tr>
+            <tr>
+              <td> Email 3</td>
+              <td>Họ 3</td>
+              <td>Tên 3</td>
+            </tr>
+            <tr>
+              <td> Email 4</td>
+              <td>Họ 4</td>
+              <td>Tên 4</td>
+            </tr>
+          </table>
+          </Row>
           <Spacer y={1} />
         </Text>
         <Spacer y={1} />

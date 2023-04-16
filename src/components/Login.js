@@ -15,6 +15,8 @@ import {
   Spacer,
 } from "@nextui-org/react";
 import { BiHomeAlt } from "@react-icons/all-files/bi/BiHomeAlt";
+import background from "../assets/images/bg-landscape.avif";
+
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -29,29 +31,36 @@ const Login = () => {
       toast.error("Email or password is empty");
       return;
     } else {
-      dispatch(handleLoginRedux(email.trim(), password.trim()));
+      dispatch(handleLoginRedux(email, password));
     }
   };
   useEffect(() => {
     if (auth && localStorage.getItem("token")) {
       toast.success("Welcome back " + account.email);
       navigate("/");
-    } else if (auth === false && isLogging === false && isError) {
-      toast.error("Wrong email or password");
+    } else if (isError===true && isLogging===false ) {
+      toast.error("Email or password is incorrect");
     }
-    //eslint-disable-next-line
   }, [auth, isLogging]);
 
   return (
     <Container fluid>
       <Grid.Container
         justify="center"
-        css={{ height: "600px", backgroundImage: "" }}
+        css={{
+          height: "80vh",
+          backgroundImage: `url(${background})`,
+          backgroundSize: "contain",
+          backgroundPosition: "center",
+          width: "100%",
+
+        }}
       >
-        <Grid xs={8} sm={3} alignItems="center">
-          <Col justify="center" span={12} alignItems="center">
+        <Grid xs={8} sm={3} alignItems="center" css={{
+        }} >
+          <Col justify="center" span={12} alignitems="center">
             <Text weight={"bold"} size={70} css={{ textAlign: "center" }}>
-              Welcome
+              Đăng nhập
             </Text>
             <Input
               value={email}
@@ -66,7 +75,7 @@ const Login = () => {
               clearable
               bordered
               css={{ width: "100%" }}
-              label="Email Address"
+              label="Địa chỉ email"
               placeholder="eve.holt@reqres.in"
             />
             <Input.Password
@@ -82,7 +91,7 @@ const Login = () => {
               clearable
               bordered
               css={{ width: "100%" }}
-              label="Password"
+              label="Mật khẩu"
               placeholder="cityslicka"
             />
             <Row justify="center">
@@ -108,7 +117,7 @@ const Login = () => {
                     }}
                   >
                     {" "}
-                    Join For Free{" "}
+                    Đăng nhập
                   </div>
                 )}
               </Button>
